@@ -1,34 +1,30 @@
 package subway.persistence.repository;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 import org.springframework.stereotype.Repository;
 import subway.domain.AdjustPath;
+import subway.domain.Direction;
 import subway.domain.Distance;
 import subway.domain.Line;
 import subway.domain.PathInfo;
 import subway.domain.Station;
-import subway.persistence.dao.LineStationDao;
 import subway.persistence.dao.SectionDao;
 import subway.persistence.dao.StationDao;
-import subway.persistence.entity.LineStationEntity;
 import subway.persistence.entity.SectionEntity;
 import subway.persistence.entity.SectionEntity.Builder;
-import subway.persistence.entity.StationEntity;
 
 @Repository
 public class SectionRepository {
 
     private final SectionDao sectionDao;
     private final StationDao stationDao;
-    private final LineStationDao lineStationDao;
 
-    public SectionRepository(final SectionDao sectionDao, final StationDao stationDao,
-            final LineStationDao lineStationDao) {
+    public SectionRepository(final SectionDao sectionDao, final StationDao stationDao) {
         this.sectionDao = sectionDao;
         this.stationDao = stationDao;
-        this.lineStationDao = lineStationDao;
     }
 
     public void insert(final Line line) {
@@ -44,7 +40,7 @@ public class SectionRepository {
             for (Station targetStation : relationStations) {
                 final PathInfo pathInfo = adjustPath.findPathInfoByStation(targetStation);
 
-                if (pathInfo.isUpStation()) {
+                if (pathInfo.matchesByDirection(Direction.UP)) {
                     continue ;
                 }
 
@@ -62,50 +58,52 @@ public class SectionRepository {
 
     private boolean isUpEnd(final List<SectionEntity> sectionEntities, final Long stationId) {
         return sectionEntities.stream()
-                .filter(sectionEntity -> sectionEntity.containsDownStationId(stationId))
-                .count() == 0L;
+                .noneMatch(sectionEntity -> sectionEntity.containsDownStationId(stationId));
     }
-    
-    public void findAllByLine(final Line line) {
-        final List<LineStationEntity> stations = lineStationDao.findAllByLineId(line.getId());
 
-        if (stations.isEmpty()) {
+    private SectionEntity findSectionEntityByUpStationId(final List<SectionEntity> sectionEntities, final Long upStationId) {
+        return sectionEntities.stream()
+                .filter(sectionEntity -> sectionEntity.containsUpStationId(upStationId)).findAny().orElseThrow();
+    }
+
+    public void findAllByLine(final Line line) {
+        final List<SectionEntity> sectionEntities = sectionDao.findAllByLineId(line.getId());
+
+        if (sectionEntities.isEmpty()) {
             return ;
         }
+        Set<Long> stationIds = new HashSet<>();
 
-        final List<SectionEntity> sectionEntities = sectionDao.findAllByLineId(line.getId());
-        final LineStationEntity lineStationEntity = stations.stream()
-                .filter(station -> isUpEnd(sectionEntities, station.getStationId()))
+        for (SectionEntity sectionEntity : sectionEntities) {
+            stationIds.add(sectionEntity.getUpStationId());
+            stationIds.add(sectionEntity.getDownStationId());
+        }
+
+        Long upStationId = stationIds.stream()
+                .filter(id -> isUpEnd(sectionEntities, id))
                 .findAny()
                 .orElseThrow();
 
-        Long startStationId = lineStationEntity.getStationId();
-        final List<Long> findStationIds = new ArrayList<>();
+        int count = 0;
 
-        findStationIds.add(startStationId);
-
-        for(int i = 0; i < sectionEntities.size(); i++) {
-            startStationId = findStationByEnd(sectionEntities, startStationId);
-            findStationIds.add(startStationId);
+        while (count++ < 1) {
+            final SectionEntity targetSectionEntity = findSectionEntityByUpStationId(sectionEntities, upStationId);
+            final Station upStation = stationDao.findById(targetSectionEntity.getUpStationId()).orElseThrow().to();
+            final Station downStation = stationDao.findById(targetSectionEntity.getDownStationId()).orElseThrow().to();
+            line.initialStations(upStation, downStation, Distance.from(targetSectionEntity.getDistance()));
+            upStationId = targetSectionEntity.getDownStationId();
         }
 
-        final List<Station> lineStationsByOrdered = stationDao.findAllByIds(findStationIds)
-                .stream()
-                .map(StationEntity::to)
-                .collect(Collectors.toList());
+        if (count == stationIds.size()) {
+            return;
+        }
 
-        final Station upStation = lineStationsByOrdered.get(0);
-        final Station downStation = lineStationsByOrdered.get(1);
-
-        line.initialStations(upStation, downStation,
-                findDistanceByUpAndDownStationId(sectionEntities, upStation.getId(), downStation.getId()));
-
-        for (int i = 2; i < lineStationsByOrdered.size(); i++) {
-            final Station sourceStation = lineStationsByOrdered.get(i - 1);
-            final Station targetStation = lineStationsByOrdered.get(i);
-
-            line.addEndStation(sourceStation, targetStation,
-                    findDistanceByUpAndDownStationId(sectionEntities, upStation.getId(), downStation.getId()));
+        while (count++ < stationIds.size()) {
+            final SectionEntity targetSectionEntity = findSectionEntityByUpStationId(sectionEntities, upStationId);
+            final Station upStation = stationDao.findById(targetSectionEntity.getUpStationId()).orElseThrow().to();
+            final Station downStation = stationDao.findById(targetSectionEntity.getDownStationId()).orElseThrow().to();
+            line.addEndStation(upStation, downStation, Distance.from(targetSectionEntity.getDistance()));
+            upStationId = targetSectionEntity.getDownStationId();
         }
     }
 

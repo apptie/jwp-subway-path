@@ -42,6 +42,7 @@ public class LineService {
 
     public ReadLineResponse findLineById(final Long id) {
         final Line line = lineRepository.findById(id).orElseThrow();
+        sectionRepository.findAllByLine(line);
 
         return ReadLineResponse.of(line);
     }

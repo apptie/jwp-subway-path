@@ -5,13 +5,15 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import subway.application.SectionService;
 import subway.ui.dto.request.CreationEndSectionRequest;
 import subway.ui.dto.request.CreationMiddleSectionRequest;
 import subway.ui.dto.request.CreationSectionRequest;
 
-@RestController("/lines/{lineId}/stations")
+@RestController
+@RequestMapping("/lines/{lineId}/stations")
 public class SectionController {
 
     private final SectionService sectionService;
@@ -36,7 +38,7 @@ public class SectionController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/regist/middle/{upStationId}/{downStationId}/{newStationId}")
+    @PostMapping("/regist/middle/{upStationId}/{downStationId}/{targetStationId}")
     public ResponseEntity<Void> addMiddleStation(@PathVariable Long lineId, @PathVariable Long upStationId,
             @PathVariable Long downStationId, @PathVariable Long targetStationId,
             @RequestBody CreationMiddleSectionRequest sectionRequest) {
@@ -46,7 +48,7 @@ public class SectionController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("DELETE /{stationId}")
+    @DeleteMapping("/{stationId}")
     public ResponseEntity<Void> removeStation(@PathVariable Long lineId, @PathVariable Long stationId) {
         sectionService.removeStation(lineId, stationId);
 

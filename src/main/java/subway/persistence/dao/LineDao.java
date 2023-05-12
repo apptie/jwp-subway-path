@@ -33,18 +33,20 @@ public class LineDao {
         final MapSqlParameterSource insertParameters = new MapSqlParameterSource()
                 .addValue("name", lineEntity.getName())
                 .addValue("color", lineEntity.getColor());
-
         final Long lineId = insertAction.executeAndReturnKey(insertParameters).longValue();
+
         return LineEntity.of(lineId, lineEntity.getName(), lineEntity.getColor());
     }
 
     public List<LineEntity> findAll() {
         final String sql = "SELECT id, name, color FROM line";
+
         return jdbcTemplate.query(sql, rowMapper);
     }
 
     public Optional<LineEntity> findById(final Long id) {
         final String sql = "SELECT id, name, color FROM LINE WHERE id = ?";
+
         return jdbcTemplate.query(sql, rowMapper, id)
                 .stream()
                 .findAny();
@@ -52,6 +54,7 @@ public class LineDao {
 
     public int deleteById(final Long id) {
         final String sql = "DELETE FROM line WHERE id = ?";
+
         return jdbcTemplate.update(sql, id);
     }
 }
