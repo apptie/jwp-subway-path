@@ -123,6 +123,14 @@ public class Line {
         stations.add(targetStation);
     }
 
+    public void removeAllStation() {
+        if (stations.size() == 2) { // 단 2개만 존재하는 경우
+            stations.clear();
+            return ;
+        }
+        throw new IllegalArgumentException("");
+    }
+
     // 이거 반환값 필요한듯
     public void removeStation(final Station targetStation) {
         if (stations.size() == 2) { // 단 2개만 존재하는 경우
@@ -134,7 +142,12 @@ public class Line {
         final AdjustPath adjustPath = newTargetStation.getAdjustPath();
 
         if (newTargetStation.isEnd()) {
-            stations.remove(newTargetStation);
+            final List<Station> stations = newTargetStation.findAdjustStation();
+            for (Station station : stations) {
+                final Station findStation = findStation(station);
+
+            }
+            this.stations.remove(newTargetStation);
         }
 
         final List<Station> stations = adjustPath.findAllStation();

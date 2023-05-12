@@ -34,26 +34,32 @@ public class SectionRepository {
         final List<SectionEntity> sectionEntities = new ArrayList<>();
 
         for (Station sourceStation : stations) {
-            final AdjustPath adjustPath = sourceStation.getAdjustPath();
-            final List<Station> relationStations = adjustPath.findAllStation();
-
-            for (Station targetStation : relationStations) {
-                final PathInfo pathInfo = adjustPath.findPathInfoByStation(targetStation);
-
-                if (pathInfo.matchesByDirection(Direction.UP)) {
-                    continue ;
-                }
-
-                final SectionEntity sectionEntity = Builder.builder()
-                        .lineId(line.getId())
-                        .upStationId(sourceStation.getId())
-                        .downStationId(targetStation.getId())
-                        .distance(pathInfo.getDistance().getDistance())
-                        .build();
-                sectionEntities.add(sectionEntity);
-            }
+            sectionEntities.addAll(convert(sourceStation, line.getId()));
         }
         sectionDao.insertAll(sectionEntities);
+    }
+
+    private List<SectionEntity> convert(final Station sourceStation, final Long lineId) {
+        final List<SectionEntity> sectionEntities = new ArrayList<>();
+        final AdjustPath adjustPath = sourceStation.getAdjustPath();
+        final List<Station> relationStations = adjustPath.findAllStation();
+
+        for (Station targetStation : relationStations) {
+            final PathInfo pathInfo = adjustPath.findPathInfoByStation(targetStation);
+
+            if (pathInfo.matchesByDirection(Direction.UP)) {
+                continue ;
+            }
+
+            final SectionEntity sectionEntity = Builder.builder()
+                    .lineId(lineId)
+                    .upStationId(sourceStation.getId())
+                    .downStationId(targetStation.getId())
+                    .distance(pathInfo.getDistance().getDistance())
+                    .build();
+            sectionEntities.add(sectionEntity);
+        }
+        return sectionEntities;
     }
 
     private boolean isUpEnd(final List<SectionEntity> sectionEntities, final Long stationId) {
