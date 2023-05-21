@@ -12,7 +12,7 @@ class FareAmountTest {
 
     @Test
     void from_메소드는_0_이하의_값을_전달하면_예외가_발생한다() {
-        assertThatThrownBy(() -> FareAmount.from(0))
+        assertThatThrownBy(() -> FareAmount.from(-1))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("요금은 양수여야 합니다.");
     }

@@ -56,7 +56,7 @@ public class PathService {
         );
 
         final ShortestPathsDto shortestPathsDto = ShortestPathsDto.from(path);
-        final FareAmount fareAmount = farePolicy.calculate(path.calculateTotalDistance());
+        final FareAmount fareAmount = farePolicy.calculateFareAmount(FareAmount.from(0L), path);
 
         return ShortestPathInfoDto.of(shortestPathsDto, fareAmount);
     }

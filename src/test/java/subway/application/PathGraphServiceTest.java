@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -14,6 +15,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import subway.application.dto.ShortestPathInfoDto;
 import subway.domain.fare.DistanceFarePolicy;
+import subway.domain.fare.FarePolicy;
+import subway.domain.fare.PathFarePolicy;
 import subway.domain.line.Line;
 import subway.domain.path.ShortestPathCalculator;
 import subway.domain.section.Direction;
@@ -42,7 +45,7 @@ class PathGraphServiceTest {
         final SectionDao sectionDao = new SectionDao(jdbcTemplate, dataSource);
         final LineDao lineDao = new LineDao(jdbcTemplate, dataSource);
         final ShortestPathCalculator calculator = new JGraphtShortestPathCalculator();
-        final DistanceFarePolicy farePolicy = new DistanceFarePolicy();
+        final FarePolicy farePolicy = new PathFarePolicy(List.of(new DistanceFarePolicy()));
 
         stationRepository = new StationRepository(stationDao, sectionDao);
         lineRepository = new LineRepository(lineDao, sectionDao);
