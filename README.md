@@ -1,5 +1,12 @@
 # jwp-subway-path
 
+### 0. 애플리케이션 실행
+
+```shell
+./gradlew clean build
+docker-compose up
+```
+
 ### 1. 기능 목록
 
 - [x] 역 (Station)
@@ -49,7 +56,7 @@
 - [x] 요금 정책 (FarePolicy)
   - [x] 이동한 거리에 따라 요금을 계산할 수 있다.
 
-2. 테이블 구조
+### 2. 테이블 구조
 
 ```sql
 CREATE TABLE IF NOT EXISTS line
@@ -78,6 +85,6 @@ CREATE TABLE IF NOT EXISTS section
 );
 ```
 
-3. API 문서
+### 3. API 문서
 
 - `API 문서`의 경우 [Postman 문서](https://documenter.getpostman.com/view/19879275/2s93eeQpTk) 에서 확인하실 수 있습니다.
