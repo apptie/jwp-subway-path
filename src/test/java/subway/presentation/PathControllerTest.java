@@ -70,17 +70,19 @@ class PathControllerTest {
         final ShortestPathInfoDto shortestPathInfoDto = ShortestPathInfoDto.of(shortestPathsDto, fareAmount);
         given(pathService.findShortestPathInfo(anyLong(), anyLong())).willReturn(shortestPathInfoDto);
 
-        mockMvc.perform(get("/paths/shortest/{sourceStationId}/{targetStationId}",
-                        sourceStation.getId() , targetStation.getId()))
+        mockMvc.perform(get("/paths/shortest")
+                        .queryParam("sourceStationId", sourceStation.getId().toString())
+                        .queryParam("targetStationId", sourceStation.getId().toString())
+                )
                 .andExpectAll(
                         status().isOk(),
-                        jsonPath("$.paths[0].stations[0].id", is(1)),
-                        jsonPath("$.paths[0].stations[0].name", is("1역")),
-                        jsonPath("$.paths[0].stations[1].id", is(2)),
-                        jsonPath("$.paths[0].stations[1].name", is("2역")),
+                        jsonPath("$.paths[0].stations[0].id", is(sourceStation.getId()), Long.class),
+                        jsonPath("$.paths[0].stations[0].name", is(sourceStation.getName())),
+                        jsonPath("$.paths[0].stations[1].id", is(targetStation.getId()), Long.class),
+                        jsonPath("$.paths[0].stations[1].name", is(targetStation.getName())),
                         jsonPath("$.paths[0].pathDistance", is(5)),
                         jsonPath("$.totalDistance", is(5)),
-                        jsonPath("$.fare", is(1250))
+                        jsonPath("$.fare", is(1_250L), Long.class)
                 );
     }
 
