@@ -63,23 +63,24 @@ class SectionControllerTest {
 
     @Test
     void addSection_메소드는_section을_저장하고_저장한_데이터를_반환한다() throws Exception {
-        final Line line = Line.of(1L, "12호선", "bg-red-500");
-        final Station upStation = Station.of(1L, "12역");
-        final Station downStation = Station.of(2L, "23역");
-        line.createSection(upStation, downStation, Distance.from(5), Direction.DOWN);
+        final Line line = Line.of(1L, "1호선", "bg-red-500");
+        final Station upStation = Station.of(1L, "1역");
+        final Station downStation = Station.of(2L, "2역");
+        final Distance distance = Distance.from(5);
+        line.createSection(upStation, downStation, distance, Direction.DOWN);
         given(createSectionService.addSection(anyLong(), anyLong(), anyLong(), any(Direction.class), anyInt()))
                 .willReturn(CreateSectionDto.from(line));
-        final CreateSectionRequest request = CreateSectionRequest.of(1L, 2L, 5, Direction.DOWN);
+        final CreateSectionRequest request = CreateSectionRequest.of(upStation.getId(), downStation.getId(), distance.getDistance(), Direction.DOWN);
 
         mockMvc.perform(post("/lines/{lineId}/sections", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpectAll(
                         status().isCreated(),
-                        jsonPath("$.stationResponses[0].id", is(1)),
-                        jsonPath("$.stationResponses[0].name", is("12역")),
-                        jsonPath("$.stationResponses[1].id", is(2)),
-                        jsonPath("$.stationResponses[1].name", is("23역"))
+                        jsonPath("$.stationResponses[0].id", is(upStation.getId()), Long.class),
+                        jsonPath("$.stationResponses[0].name", is(upStation.getName())),
+                        jsonPath("$.stationResponses[1].id", is(downStation.getId()), Long.class),
+                        jsonPath("$.stationResponses[1].name", is(downStation.getName()))
                 );
     }
 

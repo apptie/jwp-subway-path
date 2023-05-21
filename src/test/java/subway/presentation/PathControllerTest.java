@@ -60,20 +60,18 @@ class PathControllerTest {
     @Test
     void findShortestPathAndFare_메소드는_출발_역과_도착_역의_id를_전달하면_최단_경로와_요금을_반환한다()
             throws Exception {
-        final Station first = Station.of(1L, "1역");
-        final Station second = Station.of(2L, "2역");
+        final Station sourceStation = Station.of(1L, "1역");
+        final Station targetStation = Station.of(2L, "2역");
         final Line line = Line.of(1L, "1호선", "bg-red-500");
-        line.createSection(first, second, Distance.from(5), Direction.DOWN);
-        final PathEdge pathEdge = PathEdge.of(first, second, line);
-        final PathEdges pathEdges = PathEdges.create();
-        pathEdges.add(pathEdge);
-        final PathSections pathSections = pathEdges.to();
-        final ShortestPathsDto shortestPathsDto = ShortestPathsDto.from(Path.from(List.of(pathSections)));
-        final FareAmount fareAmount = FareAmount.from(1250);
+        line.createSection(sourceStation, targetStation, Distance.from(5), Direction.DOWN);
+        final Path path = createPath(sourceStation, targetStation, line);
+        final ShortestPathsDto shortestPathsDto = ShortestPathsDto.from(path);
+        final FareAmount fareAmount = FareAmount.from(1_250L);
         final ShortestPathInfoDto shortestPathInfoDto = ShortestPathInfoDto.of(shortestPathsDto, fareAmount);
         given(pathService.findShortestPathInfo(anyLong(), anyLong())).willReturn(shortestPathInfoDto);
 
-        mockMvc.perform(get("/paths/shortest/{sourceStationId}/{targetStationId}", 1, 2))
+        mockMvc.perform(get("/paths/shortest/{sourceStationId}/{targetStationId}",
+                        sourceStation.getId() , targetStation.getId()))
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.paths[0].stations[0].id", is(1)),
@@ -84,5 +82,15 @@ class PathControllerTest {
                         jsonPath("$.totalDistance", is(5)),
                         jsonPath("$.fare", is(1250))
                 );
+    }
+
+    private Path createPath(final Station sourceStation, final Station targetStation, final Line line) {
+        final PathEdge pathEdge = PathEdge.of(sourceStation, targetStation, line);
+        final PathEdges pathEdges = PathEdges.create();
+
+        pathEdges.add(pathEdge);
+
+        final PathSections pathSections = pathEdges.to();
+        return Path.from(List.of(pathSections));
     }
 }

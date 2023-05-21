@@ -57,7 +57,7 @@ class StationControllerTest {
 
     @Test
     void createStation_메소드는_station을_저장하고_저장한_데이터를_반환한다() throws Exception {
-        final Station station = Station.of(1L, "12역");
+        final Station station = Station.of(1L, "1역");
         given(stationService.saveStation(anyString())).willReturn(CreationStationDto.from(station));
         final CreateStationRequest request = CreateStationRequest.from(station.getName());
 
@@ -66,8 +66,8 @@ class StationControllerTest {
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpectAll(
                         status().isCreated(),
-                        jsonPath("$.id", is(1)),
-                        jsonPath("$.name", is("12역"))
+                        jsonPath("$.id", is(station.getId()), Long.class),
+                        jsonPath("$.name", is(station.getName()))
                 );
     }
 
@@ -75,7 +75,7 @@ class StationControllerTest {
     void createStation_메소드는_지정한_역_이름이_이미_존재하는_경우_예외가_발생한다() throws Exception {
         given(stationService.saveStation(anyString()))
                 .willThrow(new IllegalArgumentException("지정한 역의 이름은 이미 존재하는 이름입니다."));
-        final CreateStationRequest request = CreateStationRequest.from("12역");
+        final CreateStationRequest request = CreateStationRequest.from("1역");
 
         mockMvc.perform(post("/stations")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -88,14 +88,14 @@ class StationControllerTest {
 
     @Test
     void showStation_메소드는_저장되어_있는_id를_전달하면_해당_station을_반환한다() throws Exception {
-        final Station station = Station.of(1L, "12역");
+        final Station station = Station.of(1L, "1역");
         given(stationService.findStationById(anyLong())).willReturn(ReadStationDto.from(station));
 
-        mockMvc.perform(get("/stations/{stationId}", 1L))
+        mockMvc.perform(get("/stations/{stationId}", station.getId()))
                 .andExpectAll(
                         status().isOk(),
-                        jsonPath("$.id", is(1)),
-                        jsonPath("$.name", is("12역"))
+                        jsonPath("$.id", is(station.getId()), Long.class),
+                        jsonPath("$.name", is(station.getName()))
                 );
     }
 

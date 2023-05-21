@@ -57,16 +57,16 @@ class LineControllerTest {
 
     @Test
     void createLine_메소드는_line을_저장하고_저장한_데이터를_반환한다() throws Exception {
-        final Line line = Line.of(1L, "12호선", "bg-red-500");
-        given(lineService.saveLine(anyString(), anyString())).willReturn(CreationLineDto.from(line));
+        final Line line = Line.of(1L, "1호선", "bg-red-500");
         final CreateLineRequest request = CreateLineRequest.of(line.getName(), line.getColor());
+        given(lineService.saveLine(anyString(), anyString())).willReturn(CreationLineDto.from(line));
 
         mockMvc.perform(post("/lines")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpectAll(
                         status().isCreated(),
-                        jsonPath("$.id", is(1)),
+                        jsonPath("$.id", is(line.getId()), Long.class),
                         jsonPath("$.name", is(line.getName())),
                         jsonPath("$.color", is(line.getColor()))
                 );
@@ -74,9 +74,9 @@ class LineControllerTest {
 
     @Test
     void createLine_메소드는_지정한_노선_이름이_이미_존재하는_경우_예외가_발생한다() throws Exception {
+        final CreateLineRequest request = CreateLineRequest.of("1호선", "bg-red-500");
         given(lineService.saveLine(anyString(), anyString()))
                 .willThrow(new IllegalArgumentException("지정한 노선의 이름은 이미 존재하는 이름입니다."));
-        final CreateLineRequest request = CreateLineRequest.of("12호선", "bg-red-500");
 
         mockMvc.perform(post("/lines")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -89,13 +89,13 @@ class LineControllerTest {
 
     @Test
     void findAllLines_메소드는_모든_line을_반환한다() throws Exception {
-        final Line line = Line.of(1L, "12호선", "bg-red-500");
+        final Line line = Line.of(1L, "1호선", "bg-red-500");
         given(lineService.findAllLine()).willReturn(List.of(ReadLineDto.from(line)));
 
         mockMvc.perform(get("/lines"))
                 .andExpectAll(
                         status().isOk(),
-                        jsonPath("$[0].id", is(1)),
+                        jsonPath("$[0].id", is(line.getId()), Long.class),
                         jsonPath("$[0].name", is(line.getName())),
                         jsonPath("$[0].color", is(line.getColor()))
                 );
@@ -103,13 +103,13 @@ class LineControllerTest {
 
     @Test
     void findLineById_메소드는_저장되어_있는_id를_전달하면_해당_line을_반환한다() throws Exception {
-        final Line line = Line.of(1L, "12호선", "bg-red-500");
+        final Line line = Line.of(1L, "1호선", "bg-red-500");
         given(lineService.findLineById(anyLong())).willReturn(ReadLineDto.from(line));
 
         mockMvc.perform(get("/lines/{lineId}", line.getId()))
                 .andExpectAll(
                         status().isOk(),
-                        jsonPath("$.id", is(1)),
+                        jsonPath("$.id", is(line.getId()), Long.class),
                         jsonPath("$.name", is(line.getName())),
                         jsonPath("$.color", is(line.getColor()))
                 );
@@ -117,8 +117,8 @@ class LineControllerTest {
 
     @Test
     void findLineById_메소드는_없는_id를_전달하면_예외가_발생한다() throws Exception {
+        final CreateLineRequest request = CreateLineRequest.of("1호선", "bg-red-500");
         given(lineService.findLineById(anyLong())).willThrow(new IllegalArgumentException("존재하지 않는 노선입니다."));
-        final CreateLineRequest request = CreateLineRequest.of("12호선", "bg-red-500");
 
         mockMvc.perform(get("/lines/{lineId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
