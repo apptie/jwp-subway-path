@@ -1,6 +1,7 @@
 package subway.presentation;
 
 import java.net.URI;
+import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,10 @@ public class SectionController {
     private final CreateSectionService createSectionService;
     private final DeleteSectionService deleteSectionService;
 
-    public SectionController(final CreateSectionService createSectionService, final DeleteSectionService deleteSectionService) {
+    public SectionController(
+            final CreateSectionService createSectionService,
+            final DeleteSectionService deleteSectionService
+    ) {
         this.createSectionService = createSectionService;
         this.deleteSectionService = deleteSectionService;
     }
@@ -30,7 +34,7 @@ public class SectionController {
     @PostMapping
     public ResponseEntity<CreateSectionResponse> addSection(
             @PathVariable Long lineId,
-            @RequestBody CreateSectionRequest request
+            @RequestBody @Valid CreateSectionRequest request
     ) {
         final CreateSectionDto dto = createSectionService.addSection(lineId, request.getSourceStationId(),
                 request.getTargetStationId(), request.getDirection(), request.getDistance());
@@ -40,7 +44,10 @@ public class SectionController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteSection(@PathVariable Long lineId, @RequestBody DeleteSectionRequest request) {
+    public ResponseEntity<Void> deleteSection(
+            @PathVariable Long lineId,
+            @RequestBody @Valid DeleteSectionRequest request
+    ) {
         deleteSectionService.removeSection(request.getTargetStationId(), lineId);
 
         return ResponseEntity.noContent().build();

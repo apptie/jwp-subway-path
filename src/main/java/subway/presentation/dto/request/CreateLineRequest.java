@@ -1,8 +1,13 @@
 package subway.presentation.dto.request;
 
+import javax.validation.constraints.NotBlank;
+
 public class CreateLineRequest {
 
+    @NotBlank(message = "노선의 이름을 입력해주세요.")
     private String name;
+
+    @NotBlank(message = "노선의 색상을 입력해주세요.")
     private String color;
 
     private CreateLineRequest() {

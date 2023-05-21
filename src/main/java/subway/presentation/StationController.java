@@ -1,6 +1,7 @@
 package subway.presentation;
 
 import java.net.URI;
+import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,9 @@ public class StationController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateStationResponse> createStation(@RequestBody final CreateStationRequest requestDto) {
+    public ResponseEntity<CreateStationResponse> createStation(
+            @RequestBody @Valid final CreateStationRequest requestDto
+    ) {
         final CreationStationDto stationDto = stationService.saveStation(requestDto.getName());
         final CreateStationResponse response = CreateStationResponse.from(stationDto);
 

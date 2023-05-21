@@ -1,6 +1,7 @@
 package subway.presentation;
 
 import java.util.stream.Collectors;
+import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +31,7 @@ public class LineController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateLineResponse> createLine(@RequestBody final CreateLineRequest lineRequest) {
+    public ResponseEntity<CreateLineResponse> createLine(@RequestBody @Valid final CreateLineRequest lineRequest) {
         final CreationLineDto lineDto = lineService.saveLine(lineRequest.getName(), lineRequest.getColor());
 
         return ResponseEntity.created(URI.create("/lines/" + lineDto.getId())).body(CreateLineResponse.from(lineDto));
