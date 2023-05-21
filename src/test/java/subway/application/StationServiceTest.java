@@ -41,32 +41,35 @@ class StationServiceTest {
     
     @Test
     void saveStation_메소드는_station을_저장하고_저장한_데이터를_반환한다() {
-        final CreationStationDto actual = stationService.saveStation("12호선");
+        final String stationName = "1역";
+        final CreationStationDto actual = stationService.saveStation(stationName);
 
         assertAll(
                 () -> assertThat(actual.getId()).isPositive(),
-                () -> assertThat(actual.getName()).isEqualTo("12호선")
+                () -> assertThat(actual.getName()).isEqualTo(stationName)
         );
     }
 
     @Test
     void saveStation_메소드는_지정한_역_이름이_이미_존재하는_경우_예외가_발생한다() {
-        stationService.saveStation("12호선");
+        final String stationName = "1역";
+        stationService.saveStation(stationName);
 
-        assertThatThrownBy(() ->  stationService.saveStation("12호선"))
+        assertThatThrownBy(() ->  stationService.saveStation(stationName))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("지정한 역의 이름은 이미 존재하는 이름입니다.");
     }
 
     @Test
     void findStationById_메소드는_저장되어_있는_id를_전달하면_해당_station을_반환한다() {
-        final CreationStationDto creationStationDto = stationService.saveStation("12호선");
+        final String stationName = "1역";
+        final CreationStationDto creationStationDto = stationService.saveStation(stationName);
 
         final ReadStationDto actual = stationService.findStationById(creationStationDto.getId());
 
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(creationStationDto.getId()),
-                () -> assertThat(actual.getName()).isEqualTo(creationStationDto.getName())
+                () -> assertThat(actual.getName()).isEqualTo(stationName)
         );
     }
 

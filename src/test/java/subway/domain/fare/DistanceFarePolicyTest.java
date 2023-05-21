@@ -22,14 +22,14 @@ class DistanceFarePolicyTest {
     void calculate_메소드는_거리가_9km_인_경우_기본_요금_1250을_반환한다() {
         final FareAmount actual = distanceFarePolicy.calculate(9);
 
-        assertThat(actual.getAmount()).isEqualTo(1250);
+        assertThat(actual.getAmount()).isEqualTo(1_250L);
     }
 
     @Test
     void calculate_메소드는_거리가_12km_인_경우_추가_요금_1350을_반환한다() {
         final FareAmount actual = distanceFarePolicy.calculate(12);
 
-        assertThat(actual.getAmount()).isEqualTo(1350);
+        assertThat(actual.getAmount()).isEqualTo(1_350L);
     }
 
     @Test
@@ -43,6 +43,6 @@ class DistanceFarePolicyTest {
     void calculate_메소드는_거리가_58km_인_경우_추가_요금_2150을_반환한다() {
         final FareAmount actual = distanceFarePolicy.calculate(58);
 
-        assertThat(actual.getAmount()).isEqualTo(2150);
+        assertThat(actual.getAmount()).isEqualTo(2_150L);
     }
 }

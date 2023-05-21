@@ -43,9 +43,9 @@ class SectionRepositoryTest {
     @BeforeEach
     void setUp() {
         sectionRepository = new SectionRepository(sectionDao, stationDao);
-        line = Line.of(1L, "12호선", "bg-red-500");
-        final Station upStation = Station.of(1L, "12역");
-        final Station downStation = Station.of(2L, "23역");
+        line = Line.of(1L, "1호선", "bg-red-500");
+        final Station upStation = Station.of(1L, "1역");
+        final Station downStation = Station.of(2L, "2역");
         line.createSection(upStation, downStation, Distance.from(5), Direction.DOWN);
     }
 
@@ -63,8 +63,8 @@ class SectionRepositoryTest {
                 .downStationId(2L)
                 .distance(5)
                 .build();
-        final StationEntity upStationEntity = StationEntity.of(1L, "12역");
-        final StationEntity downStationEntity = StationEntity.of(2L, "23역");
+        final StationEntity upStationEntity = StationEntity.of(1L, "1역");
+        final StationEntity downStationEntity = StationEntity.of(2L, "2역");
         given(sectionDao.findAllByLineId(1L)).willReturn(List.of(sectionEntity));
         given(stationDao.findAllByIds(anySet())).willReturn(List.of(upStationEntity, downStationEntity));
 
@@ -73,6 +73,7 @@ class SectionRepositoryTest {
 
         final Station upStation = upStationEntity.to();
         final Station downStation = downStationEntity.to();
+
         assertAll(
                 () -> assertThat(actual.get(upStation).findDirectionByStation(downStation)).isEqualTo(Direction.DOWN),
                 () -> assertThat(actual.get(upStation).findDistanceByStation(downStation).distance()).isEqualTo(5),

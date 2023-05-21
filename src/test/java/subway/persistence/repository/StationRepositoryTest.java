@@ -47,21 +47,21 @@ class StationRepositoryTest {
 
     @Test
     void insert_메소드는_station을_저장하고_저장한_데이터를_반환한다() {
-        final Station station = Station.from("12역");
-        given(stationDao.insert(any(StationEntity.class))).willReturn(
-                StationEntity.of(1L, station.getName()));
+        final Station station = Station.from("1역");
+        final StationEntity stationEntity = StationEntity.of(1L, station.getName());
+        given(stationDao.insert(any(StationEntity.class))).willReturn(stationEntity);
 
         final Station actual = stationRepository.insert(station);
 
         assertAll(
-                () -> assertThat(actual.getId()).isEqualTo(1L),
+                () -> assertThat(actual.getId()).isEqualTo(stationEntity.getId()),
                 () -> assertThat(actual.getName()).isEqualTo(station.getName())
         );
     }
 
     @Test
     void insert_메소드는_지정한_역_이름이_이미_존재하는_경우_예외가_발생한다() {
-        final Station station = Station.from("12역");
+        final Station station = Station.from("1역");
         given(stationDao.existsByName(anyString())).willReturn(true);
 
         assertThatThrownBy(() -> stationRepository.insert(station))
@@ -74,7 +74,7 @@ class StationRepositoryTest {
         final StationEntity stationEntity = StationEntity.of(1L, "12역");
         given(stationDao.findById(anyLong())).willReturn(Optional.of(stationEntity));
 
-        final Optional<Station> actual = stationRepository.findById(1L);
+        final Optional<Station> actual = stationRepository.findById(stationEntity.getId());
 
         assertThat(actual).isPresent();
     }
@@ -90,10 +90,10 @@ class StationRepositoryTest {
 
     @Test
     void findAllByIds_메소드는_ids를_전달하면_해당_id를_가진_station을_반환한다() {
-        final StationEntity stationEntity = StationEntity.of(1L, "12역");
+        final StationEntity stationEntity = StationEntity.of(1L, "1역");
         given(stationDao.findAllByIds(any(Set.class))).willReturn(List.of(stationEntity));
 
-        final Map<Long, Station> actual = stationRepository.findAllByIds(Set.of(1L));
+        final Map<Long, Station> actual = stationRepository.findAllByIds(Set.of(stationEntity.getId()));
 
         assertThat(actual).hasSize(1);
     }

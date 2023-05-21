@@ -52,32 +52,34 @@ class PathGraphServiceTest {
 
     @Test
     void findShortestPathInfo_메소드는_출발_역과_도착_역을_전달하면_최단_경로를_반환한다() {
-        final Station first = stationRepository.insert(Station.from("첫번째역"));
-        final Station second = stationRepository.insert(Station.from("두번째역"));
-        final Station third = stationRepository.insert(Station.from("세번째역"));
-        final Station fourth = stationRepository.insert(Station.from("네번째역"));
-        final Station fifth = stationRepository.insert(Station.from("다섯번째역"));
-        final Station sixth = stationRepository.insert(Station.from("여섯번째역"));
-        final Station seventh = stationRepository.insert(Station.from("일곱번째역"));
-        final Station eighth = stationRepository.insert(Station.from("여덟번째역"));
-        final Station nineth = stationRepository.insert(Station.from("아홉번째역"));
+        final Station first = stationRepository.insert(Station.from("1역"));
+        final Station second = stationRepository.insert(Station.from("2역"));
+        final Station third = stationRepository.insert(Station.from("3역"));
+        final Station fourth = stationRepository.insert(Station.from("4역"));
+        final Station fifth = stationRepository.insert(Station.from("5역"));
+        final Station sixth = stationRepository.insert(Station.from("6역"));
+        final Station seventh = stationRepository.insert(Station.from("7역"));
+        final Station eighth = stationRepository.insert(Station.from("8역"));
+        final Station nineth = stationRepository.insert(Station.from("9역"));
 
-        final Line firstLine = lineRepository.insert(Line.of("일호선", "bg-red-500"));
+        final Line firstLine = lineRepository.insert(Line.of("1호선", "bg-red-500"));
+        final Distance firstLineDistance = Distance.from(80);
 
-        firstLine.createSection(first, second, Distance.from(80), Direction.DOWN);
-        firstLine.createSection(second, third, Distance.from(80), Direction.DOWN);
-        firstLine.createSection(third, fourth, Distance.from(80), Direction.DOWN);
-        firstLine.createSection(fourth, fifth, Distance.from(80), Direction.DOWN);
-        firstLine.createSection(fifth, nineth, Distance.from(80), Direction.DOWN);
+        firstLine.createSection(first, second, firstLineDistance, Direction.DOWN);
+        firstLine.createSection(second, third, firstLineDistance, Direction.DOWN);
+        firstLine.createSection(third, fourth, firstLineDistance, Direction.DOWN);
+        firstLine.createSection(fourth, fifth, firstLineDistance, Direction.DOWN);
+        firstLine.createSection(fifth, nineth, firstLineDistance, Direction.DOWN);
 
         sectionRepository.insert(firstLine);
 
-        final Line secondLine = lineRepository.insert(Line.of("이호선", "bg-blue-500"));
+        final Line secondLine = lineRepository.insert(Line.of("2호선", "bg-blue-500"));
+        final Distance secondLineDistance = Distance.from(1);
 
-        secondLine.createSection(second, sixth, Distance.from(1), Direction.DOWN);
-        secondLine.createSection(sixth, seventh, Distance.from(1), Direction.DOWN);
-        secondLine.createSection(seventh, eighth, Distance.from(1), Direction.DOWN);
-        secondLine.createSection(eighth, fifth, Distance.from(1), Direction.DOWN);
+        secondLine.createSection(second, sixth, secondLineDistance, Direction.DOWN);
+        secondLine.createSection(sixth, seventh, secondLineDistance, Direction.DOWN);
+        secondLine.createSection(seventh, eighth, secondLineDistance, Direction.DOWN);
+        secondLine.createSection(eighth, fifth, secondLineDistance, Direction.DOWN);
 
         sectionRepository.insert(secondLine);
 
@@ -92,7 +94,7 @@ class PathGraphServiceTest {
                 () -> assertThat(actual.getPathDtos().get(2).getStations()).hasSize(2),
                 () -> assertThat(actual.getPathDtos().get(2).getPathDistance()).isEqualTo(80),
                 () -> assertThat(actual.getTotalDistance()).isEqualTo(164),
-                () -> assertThat(actual.getFare()).isEqualTo(3550)
+                () -> assertThat(actual.getFare()).isEqualTo(3_550L)
         );
     }
 

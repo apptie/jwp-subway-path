@@ -45,27 +45,31 @@ class LineServiceTest {
 
     @Test
     void saveLine_메소드는_line을_저장하고_저장한_데이터를_반환한다() {
-        final CreationLineDto actual = lineService.saveLine("12호선", "bg-red-500");
+        final String lineName = "1호선";
+        final String lineColor = "bg-red-500";
+        final CreationLineDto actual = lineService.saveLine(lineName, lineColor);
 
         assertAll(
                 () -> assertThat(actual.getId()).isPositive(),
-                () -> assertThat(actual.getName()).isEqualTo("12호선"),
-                () -> assertThat(actual.getColor()).isEqualTo("bg-red-500")
+                () -> assertThat(actual.getName()).isEqualTo(lineName),
+                () -> assertThat(actual.getColor()).isEqualTo(lineColor)
         );
     }
 
     @Test
     void saveLine_메소드는_지정한_노선_이름이_이미_존재하는_경우_예외가_발생한다() {
-        lineService.saveLine("12호선", "bg-red-500");
+        final String lineName = "1호선";
+        final String lineColor = "bg-red-500";
+        lineService.saveLine(lineName, lineColor);
 
-        assertThatThrownBy(() -> lineService.saveLine("12호선", "bg-red-500"))
+        assertThatThrownBy(() -> lineService.saveLine(lineName, lineColor))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("지정한 노선의 이름은 이미 존재하는 이름입니다.");
     }
 
     @Test
     void findAll_메소드는_모든_노선을_반환한다() {
-        lineService.saveLine("12호선", "bg-red-500");
+        lineService.saveLine("1호선", "bg-red-500");
 
         final List<ReadLineDto> actual = lineService.findAllLine();
 
@@ -74,14 +78,16 @@ class LineServiceTest {
 
     @Test
     void findLineById_메소드는_저장되어_있는_id를_전달하면_해당_line을_반환한다() {
-        final CreationLineDto creationLineDto = lineService.saveLine("12호선", "bg-red-500");
+        final String lineName = "1호선";
+        final String lineColor = "bg-red-500";
+        final CreationLineDto creationLineDto = lineService.saveLine(lineName, lineColor);
 
         final ReadLineDto actual = lineService.findLineById(creationLineDto.getId());
 
         assertAll(
                 () -> assertThat(actual.getId()).isPositive(),
-                () -> assertThat(actual.getName()).isEqualTo(creationLineDto.getName()),
-                () -> assertThat(actual.getColor()).isEqualTo(creationLineDto.getColor())
+                () -> assertThat(actual.getName()).isEqualTo(lineName),
+                () -> assertThat(actual.getColor()).isEqualTo(lineColor)
         );
     }
     

@@ -8,14 +8,13 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import subway.domain.line.Line;
-import subway.domain.path.graph.PathEdge;
 import subway.domain.section.Direction;
 import subway.domain.section.Distance;
 import subway.domain.station.Station;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings({"NonAsciiCharacters", "SpellCheckingInspection"})
-class PathGraphEdgeTest {
+class PathEdgeTest {
 
     Station sourceStation;
     Station targetStation;

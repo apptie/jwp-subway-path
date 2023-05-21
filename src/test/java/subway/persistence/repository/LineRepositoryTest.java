@@ -43,14 +43,14 @@ class LineRepositoryTest {
 
     @Test
     void insert_메소드는_line을_저장하고_저장한_데이터를_반환한다() {
-        final Line line = Line.of("12호선", "bg-red-500");
-        given(lineDao.insert(any(LineEntity.class))).willReturn(LineEntity.of(1L, line.getName(), line.getColor()));
-
+        final Line line = Line.of("1호선", "bg-red-500");
+        final LineEntity lineEntity = LineEntity.of(1L, line.getName(), line.getColor());
+        given(lineDao.insert(any(LineEntity.class))).willReturn(lineEntity);
 
         final Line actual = lineRepository.insert(line);
 
         assertAll(
-                () -> assertThat(actual.getId()).isEqualTo(1L),
+                () -> assertThat(actual.getId()).isEqualTo(lineEntity.getId()),
                 () -> assertThat(actual.getName()).isEqualTo(line.getName()),
                 () -> assertThat(actual.getColor()).isEqualTo(line.getColor())
         );
@@ -58,7 +58,7 @@ class LineRepositoryTest {
 
     @Test
     void insert_메소드는_지정한_노선_이름이_이미_존재하는_경우_예외가_발생한다() {
-        final Line line = Line.of("12호선", "bg-red-500");
+        final Line line = Line.of("1호선", "bg-red-500");
         given(lineDao.existsByName(anyString())).willReturn(true);
 
         assertThatThrownBy(() -> lineRepository.insert(line))
@@ -68,10 +68,10 @@ class LineRepositoryTest {
 
     @Test
     void findById_메소드는_저장되어_있는_id를_전달하면_해당_line을_반환한다() {
-        final LineEntity lineEntity = LineEntity.of(1L, "12호선", "bg-red-500");
+        final LineEntity lineEntity = LineEntity.of(1L, "1호선", "bg-red-500");
         given(lineDao.findById(anyLong())).willReturn(Optional.of(lineEntity));
 
-        final Optional<Line> actual = lineRepository.findById(1L);
+        final Optional<Line> actual = lineRepository.findById(lineEntity.getId());
 
         assertThat(actual).isPresent();
     }
@@ -87,7 +87,7 @@ class LineRepositoryTest {
 
     @Test
     void findAll_메소드는_호출하면_모든_line을_반환한다() {
-        final LineEntity lineEntity = LineEntity.of(1L, "12호선", "bg-red-500");
+        final LineEntity lineEntity = LineEntity.of(1L, "1호선", "bg-red-500");
         given(lineDao.findAll()).willReturn(List.of(lineEntity));
 
         final List<Line> actual = lineRepository.findAll();

@@ -12,13 +12,13 @@ import subway.domain.station.Station;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings({"NonAsciiCharacters", "SpellCheckingInspection"})
-class JGraphtShortestPathCalculatorTestGraph {
+class JGraphtShortestPathCalculatorTest {
 
-    JGraphtShortestPathCalculator calculator;
+    JGraphtShortestPathCalculator shortestPathCalculator;
 
     @BeforeEach
     void setUp() {
-        calculator = new JGraphtShortestPathCalculator();
+        shortestPathCalculator = new JGraphtShortestPathCalculator();
     }
 
     @Test
@@ -26,7 +26,7 @@ class JGraphtShortestPathCalculatorTestGraph {
         final Line line = Line.of(1L, "1호선", "bg-red-500");
         final Station station = Station.of(1L, "1역");
 
-        assertThatThrownBy(() -> calculator.findPath(List.of(line), station, station))
+        assertThatThrownBy(() -> shortestPathCalculator.findPath(List.of(line), station, station))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("출발지와 목적지가 동일할 수 없습니다.");
     }

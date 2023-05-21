@@ -31,7 +31,7 @@ class StationDaoTest {
 
     @Test
     void insert_메소드는_station을_저장하고_저장한_데이터를_반환한다() {
-        final StationEntity stationEntity = StationEntity.from("12역");
+        final StationEntity stationEntity = StationEntity.from("1역");
 
         final StationEntity actual = stationDao.insert(stationEntity);
 
@@ -43,7 +43,7 @@ class StationDaoTest {
 
     @Test
     void findById_메소드는_저장되어_있는_id를_전달하면_해당_station을_반환한다() {
-        final StationEntity stationEntity = StationEntity.from("12역");
+        final StationEntity stationEntity = StationEntity.from("1역");
         final StationEntity persistStationEntity = stationDao.insert(stationEntity);
 
         final Optional<StationEntity> actual = stationDao.findById(persistStationEntity.getId());
@@ -60,7 +60,7 @@ class StationDaoTest {
 
     @Test
     void existsByName_메소드는_저장되어_있는_이름을_전달하면_true를_반환한다() {
-        final StationEntity stationEntity = StationEntity.from("12역");
+        final StationEntity stationEntity = StationEntity.from("1역");
         final StationEntity persistStationEntity = stationDao.insert(stationEntity);
 
         final boolean actual = stationDao.existsByName(persistStationEntity.getName());
@@ -70,15 +70,15 @@ class StationDaoTest {
 
     @Test
     void existsByName_메소드는_없는_이름을_전달하면_false를_반환한다() {
-        final boolean actual = stationDao.existsByName("abc");
+        final boolean actual = stationDao.existsByName("없는역이름");
 
         assertThat(actual).isFalse();
     }
 
     @Test
     void findAllByIds_메소드는_여러_id를_전달하면_해당_id의_station을_반환한다() {
-        final StationEntity firstStationEntity = stationDao.insert(StationEntity.from("12역"));
-        final StationEntity secondStationEntity = stationDao.insert(StationEntity.from("23역"));
+        final StationEntity firstStationEntity = stationDao.insert(StationEntity.from("1역"));
+        final StationEntity secondStationEntity = stationDao.insert(StationEntity.from("2역"));
         final Set<Long> ids = Set.of(firstStationEntity.getId(), secondStationEntity.getId());
 
         final List<StationEntity> actual = stationDao.findAllByIds(ids);
@@ -88,7 +88,7 @@ class StationDaoTest {
 
     @Test
     void deleteById_메소드는_id를_전달하면_해당_id를_가진_station을_삭제한다() {
-        final StationEntity stationEntity = StationEntity.from("12역");
+        final StationEntity stationEntity = StationEntity.from("1역");
         final StationEntity persistStationEntity = stationDao.insert(stationEntity);
 
         assertDoesNotThrow(() -> stationDao.deleteById(persistStationEntity.getId()));

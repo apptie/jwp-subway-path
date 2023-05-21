@@ -30,7 +30,7 @@ class LineDaoTest {
 
     @Test
     void insert_메소드는_line을_저장하고_저장한_데이터를_반환한다() {
-        final LineEntity lineEntity = LineEntity.of("12호선", "bg-red-500");
+        final LineEntity lineEntity = LineEntity.of("1호선", "bg-red-500");
 
         final LineEntity actual = lineDao.insert(lineEntity);
 
@@ -43,7 +43,7 @@ class LineDaoTest {
 
     @Test
     void findAll_메소드는_모든_line을_반환한다() {
-        final LineEntity lineEntity = LineEntity.of("12호선", "bg-red-500");
+        final LineEntity lineEntity = LineEntity.of("1호선", "bg-red-500");
         lineDao.insert(lineEntity);
 
         final List<LineEntity> actual = lineDao.findAll();
@@ -53,7 +53,7 @@ class LineDaoTest {
 
     @Test
     void findById_메소드는_저장되어_있는_id를_전달하면_해당_line을_반환한다() {
-        final LineEntity lineEntity = LineEntity.of("12호선", "bg-red-500");
+        final LineEntity lineEntity = LineEntity.of("1호선", "bg-red-500");
         final LineEntity persistLineEntity = lineDao.insert(lineEntity);
 
         final Optional<LineEntity> actual = lineDao.findById(persistLineEntity.getId());
@@ -70,7 +70,7 @@ class LineDaoTest {
 
     @Test
     void existsByName_메소드는_저장되어_있는_이름을_전달하면_true를_반환한다() {
-        final LineEntity lineEntity = LineEntity.of("12호선", "bg-red-500");
+        final LineEntity lineEntity = LineEntity.of("1호선", "bg-red-500");
         final LineEntity persistLineEntity = lineDao.insert(lineEntity);
 
         final boolean actual = lineDao.existsByName(persistLineEntity.getName());
@@ -80,14 +80,14 @@ class LineDaoTest {
 
     @Test
     void existsByName_메소드는_없는_이름을_전달하면_false를_반환한다() {
-        final boolean actual = lineDao.existsByName("abc");
+        final boolean actual = lineDao.existsByName("없는노선이름");
 
         assertThat(actual).isFalse();
     }
 
     @Test
     void deleteById_메소드는_id를_전달하면_해당_id를_가진_line을_삭제한다() {
-        final LineEntity lineEntity = LineEntity.of("12호선", "bg-red-500");
+        final LineEntity lineEntity = LineEntity.of("1호선", "bg-red-500");
         final LineEntity persistLineEntity = lineDao.insert(lineEntity);
 
         assertDoesNotThrow(() -> lineDao.deleteById(persistLineEntity.getId()));

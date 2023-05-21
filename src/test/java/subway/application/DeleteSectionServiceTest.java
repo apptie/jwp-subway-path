@@ -51,13 +51,15 @@ class DeleteSectionServiceTest {
         sectionRepository = new SectionRepository(sectionDao, stationDao);
         deleteSectionService = new DeleteSectionService(stationRepository, lineRepository, sectionRepository);
 
-        final Line persistLine = lineRepository.insert(Line.of("12호선", "bg-red-500"));
-        upStation = stationRepository.insert(Station.from("12역"));
-        middleStation = stationRepository.insert(Station.from("23역"));
-        downStation = stationRepository.insert(Station.from("34역"));
+        final Line persistLine = lineRepository.insert(Line.of("1호선", "bg-red-500"));
+        upStation = stationRepository.insert(Station.from("1역"));
+        middleStation = stationRepository.insert(Station.from("2역"));
+        downStation = stationRepository.insert(Station.from("3역"));
 
-        persistLine.createSection(upStation, middleStation, Distance.from(5), Direction.DOWN);
-        persistLine.createSection(middleStation, downStation, Distance.from(5), Direction.DOWN);
+        final Distance distance = Distance.from(5);
+        persistLine.createSection(upStation, middleStation, distance, Direction.DOWN);
+        persistLine.createSection(middleStation, downStation, distance, Direction.DOWN);
+
         sectionRepository.insert(persistLine);
         line = sectionRepository.findAllByLine(persistLine);
     }
@@ -108,7 +110,7 @@ class DeleteSectionServiceTest {
 
     @Test
     void removeSection_메소드는_구간이_존재하지_않는_lineId를_전달하면_예외가_발생한다() {
-        final Line persistLine = lineRepository.insert(Line.of("23호선", "bg-red-500"));
+        final Line persistLine = lineRepository.insert(Line.of("2호선", "bg-red-500"));
 
         assertThatThrownBy(() -> deleteSectionService.removeSection(middleStation.getId(), persistLine.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -131,7 +133,7 @@ class DeleteSectionServiceTest {
 
     @Test
     void removeSection_메소드는_해당_노선에_등록하지_않은_stationId를_전달하면_예외가_발생한다() {
-        final Station targetStation = stationRepository.insert(Station.from("45역"));
+        final Station targetStation = stationRepository.insert(Station.from("4역"));
 
         assertThatThrownBy(() -> deleteSectionService.removeSection(targetStation.getId(), line.getId()))
                 .isInstanceOf(IllegalArgumentException.class)

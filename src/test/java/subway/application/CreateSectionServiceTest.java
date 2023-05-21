@@ -54,9 +54,9 @@ class CreateSectionServiceTest {
         sectionRepository = new SectionRepository(sectionDao, stationDao);
         createSectionService = new CreateSectionService(stationRepository, lineRepository, sectionRepository);
 
-        line = lineRepository.insert(Line.of("12호선", "bg-red-500"));
-        upStation = stationRepository.insert(Station.from("12역"));
-        downStation = stationRepository.insert(Station.from("23역"));
+        line = lineRepository.insert(Line.of("1호선", "bg-red-500"));
+        upStation = stationRepository.insert(Station.from("1역"));
+        downStation = stationRepository.insert(Station.from("2역"));
     }
 
     @Nested
@@ -71,8 +71,8 @@ class CreateSectionServiceTest {
 
             assertAll(
                     () -> assertThat(actual).hasSize(2),
-                    () -> assertThat(actual.get(0).getName()).isEqualTo("12역"),
-                    () -> assertThat(actual.get(1).getName()).isEqualTo("23역")
+                    () -> assertThat(actual.get(0).getName()).isEqualTo("1역"),
+                    () -> assertThat(actual.get(1).getName()).isEqualTo("2역")
             );
         }
 
@@ -101,7 +101,7 @@ class CreateSectionServiceTest {
         void setUp() {
             line.createSection(upStation, downStation, Distance.from(5), Direction.DOWN);
             sectionRepository.insert(line);
-            targetStation = stationRepository.insert(Station.from("34역"));
+            targetStation = stationRepository.insert(Station.from("3역"));
         }
         
         @Test
