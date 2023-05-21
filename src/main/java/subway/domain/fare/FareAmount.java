@@ -13,7 +13,7 @@ public class FareAmount {
     }
 
     private void validateAmount(final long amount) {
-        if (amount <= 0) {
+        if (amount <= 0L) {
             throw new IllegalArgumentException("요금은 양수여야 합니다.");
         }
     }
