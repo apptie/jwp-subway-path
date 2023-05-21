@@ -25,7 +25,7 @@ public class PathService {
     private final LineRepository lineRepository;
     private final SectionRepository sectionRepository;
     private final StationRepository stationRepository;
-    private final ShortestPathCalculator calculator;
+    private final ShortestPathCalculator shortestPathCalculator;
     private final FarePolicy farePolicy;
 
     public PathService(
@@ -38,7 +38,7 @@ public class PathService {
         this.lineRepository = lineRepository;
         this.sectionRepository = sectionRepository;
         this.stationRepository = stationRepository;
-        this.calculator = shortestPathCalculator;
+        this.shortestPathCalculator = shortestPathCalculator;
         this.farePolicy = farePolicy;
     }
 
@@ -50,7 +50,7 @@ public class PathService {
                 .stream()
                 .map(sectionRepository::findAllByLine)
                 .collect(Collectors.toList());
-        final Path path = calculator.findPath(lines,
+        final Path path = shortestPathCalculator.findPath(lines,
                 stations.get(sourceStationId),
                 stations.get(targetStationId)
         );
