@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import subway.application.dto.ShortestPathInfoDto;
 import subway.application.dto.ShortestPathsDto;
 import subway.domain.fare.FareAmount;
@@ -18,6 +19,7 @@ import subway.persistence.repository.SectionRepository;
 import subway.persistence.repository.StationRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class PathService {
 
     private static final int VALID_STATION_SIZE = 2;
