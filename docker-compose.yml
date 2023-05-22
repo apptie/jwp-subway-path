@@ -16,3 +16,8 @@ services:
     ports:
       - 8080:8080
     restart: always
+    environment:
+      DRIVER_NAME : org.h2.Driver
+      URL: jdbc:h2:tcp://h2:1521/subway;MODE=MySQL
+      USERNAME: username
+      PASSWORD:
