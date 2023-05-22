@@ -22,11 +22,23 @@ public class InitializeDatabase {
 
     @PostConstruct
     public void init() {
-        stationDao.insert(StationEntity.from("1역"));
-        stationDao.insert(StationEntity.from("2역"));
-        stationDao.insert(StationEntity.from("3역"));
-        stationDao.insert(StationEntity.from("4역"));
-        stationDao.insert(StationEntity.from("5역"));
-        lineDao.insert(LineEntity.of("1호선", "bg-red-500"));
+        insertStation("1역");
+        insertStation("2역");
+        insertStation("3역");
+        insertStation("4역");
+        insertStation("5역");
+        insertLine("1호선", "bg-red-500");
+    }
+
+    private void insertStation(final String stationName) {
+        if (!stationDao.existsByName(stationName)) {
+            stationDao.insert(StationEntity.from(stationName));
+        }
+    }
+
+    private void insertLine(final String lineName, final String lineColor) {
+        if (!lineDao.existsByName(lineName)) {
+            lineDao.insert(LineEntity.of(lineName, lineColor));
+        }
     }
 }
