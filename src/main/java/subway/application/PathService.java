@@ -45,7 +45,7 @@ public class PathService {
     }
 
     public ShortestPathInfoDto findShortestPathInfo(final Long sourceStationId, final Long targetStationId) {
-        validateUniqueStationId(sourceStationId, targetStationId);
+        validateDifferentStationId(sourceStationId, targetStationId);
 
         final Map<Long, Station> stations = findStations(sourceStationId, targetStationId);
         final List<Line> lines = lineRepository.findAll()
@@ -71,7 +71,7 @@ public class PathService {
         return stations;
     }
 
-    private void validateUniqueStationId(final Long sourceStationId, final Long targetStationId) {
+    private void validateDifferentStationId(final Long sourceStationId, final Long targetStationId) {
         if (sourceStationId.equals(targetStationId)) {
             throw new IllegalArgumentException("출발 역과 도착 역이 동일할 수 없습니다.");
         }
